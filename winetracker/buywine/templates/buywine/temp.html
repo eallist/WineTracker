@@ -1,0 +1,78 @@
+{% block main %}
+<form method="post" action="{% url 'customercounts.views.customer_counts' %}">
+    {% csrf_token %}
+    <h4>Client:</h4>
+    <select name="client" id="client">
+      {% for client in clients %}
+        <option data-has-gas="{{ client.has_gas_customers }}" value="{{ client.clientid }}">{{ client.clientname }}</option>
+      {% endfor %}
+    </select>
+    <br/>
+
+    <div id="commodity">
+      <h4>Commodity:</h4>
+      <select class="commodity" name="commodity">
+        <option value="power">Power</option>
+        <option value="gas">Gas</option>
+      </select>
+    </div>
+
+    <div id="report">
+      <h4>Report:</h4>
+      <select name="report">
+        <option value="1">By Day | Zone</option>
+        <option value="2">By Day | State</option>
+        <option value="3">By Day | Zone | Utility</option>
+        <!--<option value="4">By Day | Utility | Rate Class</option>
+        <option value="5">By Day | Zone | Utility | Rate Class</option>-->
+      </select>
+    </div>
+    <h4>Date Range:</h4>
+    <input type="text" id="sdate" name="sdate"/> to <input type="text" id="edate" name="edate"/>
+    <br><br>
+    <input id="report-btn" type="submit" name="submit" value="Submit"/>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+function toggleCommidity() {
+    var clientHasGas = $('#client option:selected').data('has-gas') === 'True';
+    if (clientHasGas) {
+        $('#commodity').show();
+    }
+    else {
+        $('#commodity').hide();
+    }
+    toggleReport();
+}
+
+function toggleReport() {
+    var isCommodityVisible = $('#commodity').is(':visible');
+    var isNotPower = $('select.commodity option:selected').val() !== 'power';
+    if (isCommodityVisible && isNotPower) {
+        $('#report').hide();
+    } else {
+        $('#report').show();
+    }
+}
+
+    $(document).ready(function () {
+        $("#sdate").datepicker();
+        $("#edate").datepicker();
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth(); //January is 0!
+        var yr = today.getFullYear();
+        $('#sdate').datepicker("setDate", new Date(yr, mm, dd));
+        $('#edate').datepicker("setDate", new Date(yr, mm, dd + 1));
+
+        $('#client').change(toggleCommidity);
+        $('select.commodity').change(toggleReport);
+
+        toggleCommidity();
+        toggleReport();
+    });
+</script>
+<script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+{% endblock %}

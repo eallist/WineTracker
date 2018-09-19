@@ -1,0 +1,14 @@
+{% comment %}
+Wine Tracker Index
+{% endcomment %}
+
+{% block title %}
+    <h2>Wine Tracker</h2>
+{% endblock title %}
+
+{% block content %}
+    <br><a href="{% url 'save-new-wine-purchase' %}">Save New Wine Purchase</a></br>
+    <br><a href="{% url 'find-wine' %}">Find Wine in Collection</a></br>
+    <br><a href="{% url 'explore-wine-collection' %}">Explore Wine Collection</a></br>
+{% endblock content %}
+
